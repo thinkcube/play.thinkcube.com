@@ -6,9 +6,9 @@ Slug: development-environment-on-docker
 Author: Chanux
 Summary: Step by step guide for setting up a dev environment with docker
 
-What is docker?
+First of what is this docker thing everyone is talking about? This is what the creators have to say about docker.
 
-“An open source project to pack, ship and run any application as a lightweight container”
+"An open source project to pack, ship and run any application as a lightweight container"
 
 That’s right, Docker allows you to run any application in an isolated environment called a container. Docker utilizes LXC, short for Linux containers, to create containers. Setting up LXC and doing useful things with it is a bit of a work. That’s where Docker comes in to help. You can put your application in a Docker container with all it’s configurations and settings in place, add in the databases the app needs and a firewall if you may.Oh and it will handle the networking stuff for you as well. One bad thing though. It takes away your excuse to go back to your favorite time wasting website because… boy it starts in a jiffy. At least it doesn’t slow your computer to a crawl.
 
@@ -24,14 +24,14 @@ You are better off following the [official guide](https://docs.docker.com/instal
 
 Docker needs Linux kernel 3.8 and AUFS support. Since Ubuntu Rringtail comes with 3.8 kernel, we only need to install AUFS support (If you are using a previous version of Ubuntu please follow the guide I linked above. If you are not sure check your kernel version with ‘uname -r’)
 
-```
+```console
 sudo apt-get update
 sudo apt-get install linux-image-extra-`uname -r`
 ```              
 
 Then we add Docker repository key, add Docker repository to our repository list and finally install Docker.
 
-```
+```console
 wget -qO http://get.docker.io/gpg | sudo apt-key add -
 echo “deb https://get.docker.io/ubuntu docker main” | sudo tee /etc/apt/sources.list.d/docker.list
 sudo apt-get update
@@ -40,7 +40,7 @@ sudo apt-get install lxc-docker
 
 Docker is ready for your service. Try running
 
-```
+```console
 sudo docker run ubuntu:precise /bin/echo Hello World
 ```
 
@@ -98,7 +98,7 @@ Now let us checkout what magic is behind abracadabra script
 
 File: [abracadabra](https://gist.github.com/chanux/6610593#file-wordpress-vhost)
 
-```
+```bash
 #!/bin/bash
 
 a2dissite default
@@ -112,7 +112,7 @@ The last piece is the virtual host (vhost for short) for the wordpress. A comple
 
 File: [wordpress.vhost](https://gist.github.com/chanux/6610593#file-wordpress-vhost)
 
-```
+```apache
 <VirtualHost *:80>
 
     ServerAdmin webmaster@localhost
@@ -133,20 +133,20 @@ File: [wordpress.vhost](https://gist.github.com/chanux/6610593#file-wordpress-vh
 
 Now we are ready to build. Put all the files I mentioned above in one directory and cd in to it. Create two directories called mysql and www. We are going to need those later.
 
-```
+```console
 chanux@nim:~/docker-lamp$ mkdir mysql www
 ```
 
 Recheck whether you have everything needed for our adventure.
 
-```
+```console
 chanux@nim:~/docker-lamp$ ls
 abracadabra Dockerfile mysql wordpress.vhost www
 ```
 
 Let’s run the docker build command.
 
-```
+```console
 chanux@nim:~/docker-lamp$ sudo docker build -t mylamp . # Do not miss that dot at the end of the command
 ```
 
@@ -154,13 +154,13 @@ chanux@nim:~/docker-lamp$ sudo docker build -t mylamp . # Do not miss that dot a
 
 Before moving to more interesting stuff we need to get one dirty task done. I wouldn’t go in to details about this right now but you’ll understand what it’s about when I describe the docker run command.
 
-```
+```console
 chanux@nim:~/docker-lamp$ sudo docker run -d -v $(pwd)/mysql:/tmp/mysql uwp /bin/bash -c “cp -rp /var/lib/mysql/* /tmp/mysql”
 ```
 
 Now that little thing out of our way it’s time to actually launch your first useful Docker container! Run following command on a separate terminal.
 
-```
+```console
 chanux@nim:~/docker-lamp$ sudo docker run -i -t -v $(pwd)/mysql:/var/lib/mysql -v $(pwd)/www:/var/www -p 8080:80 mylamp /bin/bash
 ```
 
@@ -170,7 +170,7 @@ To find out what all these options mean you can just run ‘sudo docker run’ t
 
 If everything went all right docker should start and put you on a command prompt. You can start apache by issuing following command
 
-```
+```console
 root@399d1092ddf6:/# service apache2 start
 ```
 
@@ -181,7 +181,7 @@ HTML files are fun but we need to see how M and P of LAMP works in Docker. To pu
 
 So the plan is to put wordpress in our www directory, edit the config file and install it. Shall we get on command line and quickly get it done?
 
-```
+```console
 chanux@nim:~/docker-lamp$ cd www
 chanux@nim:~/docker-lamp/www$ wget https://wordpress.org/latest.tar.gz
 chanux@nim:~/docker-lamp/www$ tar xzf latest.tar.gz
@@ -191,13 +191,13 @@ That will extract the sneakily named wordpress tarball, latest.tar.gz in to a di
 
 Now get back on the prompt of our docker container. It’s time for some magic. Just say abracadabra!
 
-```
+```console
 root@399d1092ddf6:/# abracadabra
 ```
 
 That will start apache and mysql for us. We need to create a database called ‘wordpress’ on mysql. For that run
 
-```
+```console
 root@399d1092ddf6:/# mysqladmin -uroot create wordpress
 ```
 
