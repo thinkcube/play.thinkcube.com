@@ -1,5 +1,5 @@
-*
-!.gitignore
-!content
-!pelicanconf.py
-!README.md
+develop_server.sh
+fabfile.py
+Makefile
+output
+*pyc
