@@ -1,4 +1,5 @@
 develop_server.sh
+pelican-themes
 fabfile.py
 Makefile
 output

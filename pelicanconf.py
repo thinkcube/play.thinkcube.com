@@ -6,7 +6,8 @@ AUTHOR = u'thikcube'
 SITENAME = u'thinkCube: Play'
 SITEURL = 'http://play.thinkcube.com'
 PAGE_DIR = 'content/pages'
-THEME = "/home/chanux/Projects/play/pelican-themes/tuxlite_tbs"
+THEME = 'pelican-themes/tuxlite_tbs'
+PATH = 'content'
 
 TIMEZONE = 'Asia/Colombo'
 
